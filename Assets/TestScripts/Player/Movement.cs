@@ -19,6 +19,8 @@ public class Movement : MonoBehaviour
     private Rigidbody2D rb;
     private float GroundedTimer;
     public float GroundedTimerRef;
+    private float PressedTimer;
+    public float PressedTimerRef;
     void Awake(){
         rb = GetComponent<Rigidbody2D>();
     }
@@ -46,20 +48,26 @@ public class Movement : MonoBehaviour
     }
     void Jump(){
         GroundedTimer -= Time.deltaTime;
+        PressedTimer -= Time.deltaTime;
         if(isGrounded){
             GroundedTimer = GroundedTimerRef;
         }
-        if(GroundedTimer > 0 && Input.GetButtonDown("Jump")){
+        if(Input.GetButtonDown("Jump")){
+            PressedTimer = PressedTimerRef;
+        }
+        if(GroundedTimer > 0 && PressedTimer > 0 && rb.velocity.y <= 0){
             rb.velocity = new Vector2(rb.velocity.x,jumpStrength);
             GroundedTimer = 0;
+            PressedTimer = 0;
         }
-        if(rb.velocity.y > 0 && rb.velocity.y < 1 && !Input.GetButton("Jump") && !isGrounded){
+        if(rb.velocity.y > 0 && rb.velocity.y < 1.5f && !Input.GetButton("Jump") && !isGrounded){
             rb.velocity = new Vector2(rb.velocity.x,rb.velocity.y * 0.9f);
-        }else if(rb.velocity.y > 0 && rb.velocity.y < 2 && !Input.GetButton("Jump") && !isGrounded){
+        }
+        if(rb.velocity.y > 1.5f && rb.velocity.y < 3 && !Input.GetButton("Jump") && !isGrounded){
             rb.velocity = new Vector2(rb.velocity.x,rb.velocity.y * 0.7f);
         }
-        else if(rb.velocity.y > 0 && !Input.GetButton("Jump") && !isGrounded){
-            rb.velocity = new Vector2(rb.velocity.x,rb.velocity.y * 0.3f);
+        if(rb.velocity.y > 3 && !Input.GetButton("Jump") && !isGrounded){
+            rb.velocity = new Vector2(rb.velocity.x,rb.velocity.y * 0.5f);
         }
 
     }
